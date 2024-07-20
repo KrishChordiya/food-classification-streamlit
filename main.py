@@ -5,13 +5,12 @@ from torchvision import transforms
 
 classnames= ['pizza', 'risotto', 'steak','sushi']
 
-device = "cuda" if torch.cuda.is_available() else "cpu"
 simple_transform = transforms.Compose([
     transforms.Resize((224, 224)),
     transforms.ToTensor(),
     transforms.Normalize(mean=[0.485, 0.456, 0.406], std=[0.229, 0.224, 0.225])
 ])
-model = torch.load('model_SDG.pt').to(device)
+model = torch.load('model_SDG.pt').to("cpu")
 
 
 st.markdown("<h1 style='text-align: center;'>Basic Food Classifier</h1>", unsafe_allow_html=True)
@@ -36,7 +35,7 @@ if analyse_btn and img is not None:
     with torch.inference_mode():
         print("Working")
         img_data = Image.open(img)
-        transformed_img = simple_transform(img_data).unsqueeze(0).to(device)
+        transformed_img = simple_transform(img_data).unsqueeze(0).to("cpu")
         result = torch.argmax(model(transformed_img), 1).item()
         st.image(img)
         st.markdown(f"<h3 style='text-align: center;'>Above Image is of <span style='text-decoration:underline'>{classnames[result].capitalize()}</span></h3>", unsafe_allow_html=True)
